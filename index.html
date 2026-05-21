@@ -425,7 +425,7 @@
         start: {
             title: "Sample Preparation",
             instruction: "Place approximately 25 of soil in your palm. Add water and knead the soil to break down all chunks. Stop adding water when the soil reaches a highly moldable consistency resembling moist putty.",
-            image: <img src="25gSoil.png",
+            image: "25gSoil.png"
             question: "Is your sample uniformly mixed, moist, and ready to test?",
             options: [
                 { text: "Yes, let's get started!", next: "ballTest" }
@@ -437,7 +437,7 @@
             title: "The Ball Squeeze Test",
             instruction: "Take the structural clump of prepared soil and squeeze it firmly inside your hand closure.",
             question: "Does the soil remain in a stable ball shape when squeezed?",
-             image: <img src="BallSoil.png",
+             image: "BallSoil.png"
             options: [
                 { text: "No (It crumbles and falls apart instantly)", result: "sand", pathLabel: "No Ball" },
                 { text: "Yes (It holds its ball structure)", next: "ribbonTest", pathLabel: "Ball Forms" }
@@ -448,7 +448,7 @@
         ribbonTest: {
             title: "The Ribbon Test",
             instruction: "Place the soil ball securely between your thumb and forefinger. Gently push the soil upward with your thumb, squeezing it out over your index finger to form a flat ribbon of uniform thickness.",
-            image: <img src="RibbonSoil.png",
+            image: "RibbonSoil.png"
             question: "Does the soil form a continuous ribbon without breaking immediately?",
             options: [
                 { text: "No (It breaks without ribboning)", result: "loamy_sand", pathLabel: "No Ribbon" },
