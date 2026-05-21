@@ -304,6 +304,8 @@
     <div class="footer-nav">
         <button class="btn-nav" id="btn-back" onclick="goBack()">← Back</button>
         <button class="btn-nav" onclick="restart()">Restart Test ↻</button>
+        Based on the official <a href="https://www.nrcs.usda.gov/sites/default/files/2022-11/texture-by-feel.pdf" target="_blank">USDA NRCS Texture-by-Feel Flow Diagram</a> (Thien, 1979).
+        Images from <a href="https://www.youtube.com/watch?v=ahY5qZwaY1E&t=627s" target="_blank">Professor Mark Valen</a> .
     </div>
 </div>
 
@@ -311,29 +313,26 @@
     // System Flow Chart Decision Tree Structure
     const workflow = {
         start: {
-            title: "Moisten & Knead",
-            icon: "🌱",
+            title: "Soil Preparation",
             stepNum: 1,
-            description: "Take a handful of soil (approx. 25g). Slowly add water drop-by-drop and knead it thoroughly until it reaches a uniform, plastic consistency similar to putty or modeling clay.",
+            description: "Take a handful of soil (approx. 25g). Add water and knead it thoroughly until it reaches a uniform consistency similar to putty or modeling clay.",
             image: "25gSoil.png",
             options: [
-                { text: "Does the soil stay assembled into a ball configuration?", next: "ball_formed" }
+                { text: "Are you ready to get started??", next: "ball_formation" }
             ]
         },
-        ball_formed: {
+        ball_formation: {
             title: "Ball Formation Test",
-            icon: "🔮",
             stepNum: 2,
-            description: "Gently squeeze the sample. Does it hold together or instantly shatter when pressure is applied?",
+            description: "Gently squeeze the sample. Does it hold together or instantly crumble when pressure is applied?",
             image: "BallSoil.png",
             options: [
                 { text: "Yes, it holds its shape (Proceed to ribbon test)", next: "ribbon_test" },
-                { text: "No, it crumbles and breaks apart completely", result: "Sand", desc: "Coarse-textured soil. Loose individual sand grains fail to bond together under standard moisture profiles.", stats: [10, 95, 5] }
+                { text: "No, it crumbles and breaks apart", result: "Sand", desc: "Coarse-textured soil. Loose individual sand grains fail to bond together under standard moisture profiles.", stats: [10, 95, 5] }
             ]
         },
         ribbon_test: {
             title: "Ribbon Formation Test",
-            icon: "🎗️",
             stepNum: 3,
             description: "Place the soil ball between your thumb and forefinger. Roll your thumb upward gently to press the soil out, forming a ribbon of uniform width and thickness (~3mm). Allow it to extend past your finger until it snaps off naturally.",
             image: "RibssonSoil.png", 
@@ -344,9 +343,8 @@
         },
         ribbon_length: {
             title: "Ribbon Measurement",
-            icon: "📐",
             stepNum: 4,
-            description: "Evaluate the physical characteristics and length achieved by your soil ribbon before gravity broke it.",
+            description: "Evaluate the length achieved by your soil ribbon before gravity broke it.",
             options: [
                 { text: "Weak Ribbon (Short, less than 1 inch / 2.5 cm)", next: "grittiness_weak" },
                 { text: "Medium Ribbon (Moderate, 1 to 2 inches / 2.5 - 5 cm)", next: "grittiness_medium" },
@@ -355,9 +353,8 @@
         },
         grittiness_weak: {
             title: "Texture Assessment (< 1\")",
-            icon: "🌾",
             stepNum: 5,
-            description: "Take a small pinch of the soil sample, oversaturate it excessively in the palm of your hand with water, and rub it aggressively with your index finger.",
+            description: "Take a small pinch of the soil sample, oversaturate it with water in the palm of your hand with water. Evaluate the texture as you rub soil with your index finger.",
             image: "SoilTexture.png",
             options: [
                 { text: "Feels highly gritty and abrasive", result: "Sandy Loam", desc: "Moderately coarse soil profile. Dominated by coarse sand with enough clay to support a small, brittle ribbon.", stats: [40, 70, 30] },
@@ -367,9 +364,8 @@
         },
         grittiness_medium: {
             title: "Texture Assessment (1\" - 2\")",
-            icon: "🌾",
             stepNum: 5,
-            description: "Take a small pinch of the soil sample, oversaturate it excessively in your palm, and rub it with your index finger to assess relative grittiness vs smoothness.",
+            description: "Take a small pinch of the soil sample, oversaturate it with water in the palm of your hand with water. Evaluate the texture as you rub soil with your index finger.",
            image: "SoilTexture.png",
             options: [
                 { text: "Feels highly gritty and abrasive", result: "Sandy Clay Loam", desc: "Moderately fine-textured soil profile. Noticeable grittiness structural frame embedded within a cohesive clay matrix.", stats: [55, 40, 65] },
@@ -379,10 +375,8 @@
         },
         grittiness_strong: {
             title: "Texture Assessment (> 2\")",
-            icon: "🌾",
             stepNum: 5,
-            description: "Take a small pinch of the soil sample, oversaturate it excessively in your palm, and rub it with your index finger to identify fine composite profiles.",
-            image: "SoilTexture.png",
+          description: "Take a small pinch of the soil sample, oversaturate it with water in the palm of your hand with water. Evaluate the texture as you rub soil with your index finger.",
             options: [
                 { text: "Feels highly gritty and abrasive", result: "Sandy Clay", desc: "Fine-textured soil profile. Heavily cohesive clay values intermixed with prominent, abrasive sand aggregates.", stats: [75, 20, 85] },
                 { text: "Feels exceptionally smooth and plastic", result: "Silty Clay", desc: "Fine-textured soil profile. Highly plastic, smooth clay structure. Extremely sticky behavior when saturated.", stats: [85, 15, 95] },
