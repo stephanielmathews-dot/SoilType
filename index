@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USDA NRCS Soil Texture by Feel Interactive Guide</title>
+    <style>
+        :root {
+            --primary: #3d5a40;
+            --primary-light: #f0f4f1;
+            --primary-dark: #263c28;
+            --accent: #b85c38;
+            --accent-light: #fdf5f2;
+            --bg-main: #f5f4f0;
+            --card-bg: #ffffff;
+            --text-dark: #2c2520;
+            --text-muted: #61574f;
+            --border-color: #cbd5e1;
+            --radius: 12px;
+            --shadow: 0 10px 25px rgba(44, 37, 32, 0.05);
+            --transition: all 0.2s ease-in-out;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 750px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        header {
+            background-color: var(--primary);
+            color: #ffffff;
+            padding: 30px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.85);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .progress-container {
+            background: var(--primary-light);
+            padding: 12px 30px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .steps-indicator {
+            display: flex;
+            gap: 8px;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #cbd5e1;
+            transition: var(--transition);
+        }
+
+        .step-dot.active {
+            background-color: var(--primary);
+            transform: scale(1.2);
+        }
+
+        .step-dot.completed {
+            background-color: var(--accent);
+        }
+
+        .content {
+            padding: 40px;
+            min-height: 340px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .step-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        @media (min-width: 600px) {
+            .step-layout {
+                grid-template-columns: 100px 1fr;
+            }
+        }
+
+        .step-icon {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            color: var(--primary);
+        }
+
+        .step-icon svg {
+            width: 70px;
+            height: 70px;
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+        }
+
+        .step-instruction {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .step-question {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            background-color: var(--primary-light);
+            padding: 14px 18px;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+            margin-bottom: 24px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        button.btn-option {
+            background-color: #ffffff;
+            border: 2px solid #e2e8f0;
+            color: var(--text-dark);
+            padding: 16px 20px;
+            font-size: 0.98rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        button.btn-option:hover {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        button.btn-option::after {
+            content: "→";
+            font-size: 1.1rem;
+            color: #94a3b8;
+            transition: var(--transition);
+        }
+
+        button.btn-option:hover::after {
+            color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        /* Flowchart Real-time Path Mapper */
+        .flowchart-path {
+            background-color: #fafaf9;
+            padding: 15px 40px;
+            border-top: 1px solid rgba(0,0,0,0.04);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .path-node {
+            background: #e2e8f0;
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .path-node.active {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .path-node.final {
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        .path-arrow {
+            color: #94a3b8;
+            font-weight: bold;
+        }
+
+        /* Results Display Card */
+        .result-card {
+            background-color: var(--accent-light);
+            border: 1px solid rgba(184, 92, 56, 0.15);
+            padding: 30px;
+            border-radius: var(--radius);
+        }
+
+        .result-badge {
+            display: inline-block;
+            background-color: var(--accent);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+
+        .result-name {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        .result-category {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .result-desc {
+            font-size: 1rem;
+            color: var(--text-dark);
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .properties-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        @media (min-width: 500px) {
+            .properties-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .prop-item {
+            background-color: #ffffff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .prop-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .meter-bg {
+            background: #e2e8f0;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .meter-bar {
+            background: var(--primary);
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .controls-bar {
+            background-color: #fafafa;
+            padding: 20px 40px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        button.btn-nav {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        button.btn-nav:hover:not(:disabled) {
+            background-color: rgba(0,0,0,0.04);
+            color: var(--text-dark);
+        }
+
+        button.btn-nav:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        button#btn-restart {
+            color: var(--accent);
+        }
+        button#btn-restart:hover {
+            background-color: var(--accent-light);
+        }
+
+        .info-footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(0,0,0,0.03);
+            background: #ffffff;
+        }
+
+        .info-footer a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Soil Texture by Feel</h1>
+        <p>USDA NRCS Field Methodology</p>
+    </header>
+
+    <div class="progress-container">
+        <span id="progress-text">Step 1 of 5</span>
+        <div class="steps-indicator" id="steps-indicator">
+            <div class="step-dot active"></div>
+            <div class="step-dot"></div>
+            <div class="step-dot"></div>
+            <div class="step-dot"></div>
+            <div class="step-dot"></div>
+        </div>
+    </div>
+
+    <div class="content" id="dynamic-content">
+        </div>
+
+    <div class="flowchart-path" id="flowchart-path">
+        </div>
+
+    <div class="controls-bar">
+        <button class="btn-nav" id="btn-back" onclick="goBack()" disabled>
+            ← Back
+        </button>
+        <button class="btn-nav" id="btn-restart" onclick="restart()">
+            Restart Test ↻
+        </button>
+    </div>
+
+    <div class="info-footer">
+        Based on the official <a href="https://www.nrcs.usda.gov/sites/default/files/2022-11/texture-by-feel.pdf" target="_blank">USDA NRCS Texture-by-Feel Flow Diagram</a> (Thien, 1979).
+    </div>
+</div>
+
+<script>
+    // System Step Navigation Logic Configuration
+    const steps = {
+        start: {
+            title: "Sample Preparation",
+            instruction: "Place approximately 2 teaspoons of soil in your palm. Add water drop-by-drop and knead the soil to break down all aggregate chunks. Stop adding water when the soil reaches a plastic, highly moldable consistency resembling moist putty.",
+            question: "Is your sample uniformly mixed, moist, and ready to test?",
+            options: [
+                { text: "Yes, begin test criteria", next: "ballTest" }
+            ],
+            icon: `<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v14m0-14c-1.5 0-3 1.5-3 4s1.5 5 3 7m0-11c1.5 0 3 1.5 3 4s-1.5 5-3 7m-9 5h18"/></svg>`,
+            index: 0
+        },
+        ballTest: {
+            title: "The Ball Squeeze Test",
+            instruction: "Take the structural clump of prepared soil and squeeze it firmly inside your hand closure.",
+            question: "Does the soil remain in a stable ball shape when squeezed?",
+            options: [
+                { text: "No (It crumbles/falls apart instantly)", result: "sand", pathLabel: "No Ball" },
+                { text: "Yes (It safely holds its ball structure)", next: "ribbonTest", pathLabel: "Ball Forms" }
+            ],
+            icon: `<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" stroke-dasharray="3 3"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 2a10 10 0 110 20 10 10 0 010-20z"/></svg>`,
+            index: 1
+        },
+        ribbonTest: {
+            title: "The Ribbon Test",
+            instruction: "Place the soil ball securely between your thumb and forefinger. Gently push the soil upward with your thumb, squeezing it out over your index finger to form a flat ribbon of uniform thickness.",
+            question: "Does the soil form a continuous ribbon without breaking immediately?",
+            options: [
+                { text: "No (It breaks without ribboning)", result: "loamy_sand", pathLabel: "No Ribbon" },
+                { text: "Yes (It forms an emerging ribbon)", next: "ribbonLength", pathLabel: "Ribbon Forms" }
+            ],
+            icon: `<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 20V9a4 4 0 014-4h8a4 4 0 014 4v11"/></svg>`,
+            index: 2
+        },
+        ribbonLength: {
+            title: "Ribbon Length Measurement",
+            instruction: "Allow the ribbon to slide outward over your finger until it snaps off naturally from its own weight. Estimate or measure the length of the ribbon fragments.",
+            question: "What length did the ribbon reach before snapping?",
+            options: [
+                { text: "Weak Ribbon (Short, less than 1 inch / 2.5 cm)", next: "feelTest", data: { ribbon: "weak" }, pathLabel: "Weak (<1\")" },
+                { text: "Medium Ribbon (Moderate, 1 to 2 inches / 2.5–5 cm)", next: "feelTest", data: { ribbon: "medium" }, pathLabel: "Medium (1-2\")" },
+                { text: "Strong Ribbon (Long, greater than 2 inches / 5 cm)", next: "feelTest", data: { ribbon: "strong" }, pathLabel: "Strong (>2\")" }
+            ],
+            icon: `<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="10" rx="1"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 7v4M10 7v6M14 7v4M18 7v6"/></svg>`,
+            index: 3
+        },
+        feelTest: {
+            title: "The Wet Feel Evaluation",
+            instruction: "Take a small pinch of soil and place it in your palm. Add an excess of water until it forms a very wet, muddy slurry. Rub it thoroughly against your skin with your index finger.",
+            question: "How does the excessively wet soil primarily feel?",
+            options: [
+                { text: "Very Gritty (Individual sand grains scratch against skin)", feel: "gritty", pathLabel: "Gritty" },
+                { text: "Very Smooth (Feels velvety, slick, like flour or talc)", feel: "smooth", pathLabel: "Smooth" },
+                { text: "Neither Gritty nor Smooth (Sensations are evenly balanced)", feel: "neither", pathLabel: "Balanced" }
+            ],
+            icon: `<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12c3-3 7-3 10 0s7 3 10 0M6 16c2-2 5-2 8 0s5 2 8 0"/></svg>`,
+            index: 4
+        }
+    };
+
+    // Result Matrix Lookup Table Mapping
+    const resultsMapping = {
+        weak: { gritty: "sandy_loam", smooth: "silt_loam", neither: "loam" },
+        medium: { gritty: "sandy_clay_loam", smooth: "silty_clay_loam", neither: "clay_loam" },
+        strong: { gritty: "sandy_clay", smooth: "silty_clay", neither: "clay" }
+    };
+
+    // Structural Soil Classification Properties Profiles Data
+    const soilDetails = {
+        sand: {
+            name: "Sand",
+            category: "Coarse-textured soil",
+            description: "Sand consists entirely of large, loose particles. It feels highly gritty, lacks cohesion, cannot store plant-available water well, and drains almost instantaneously. Highly aerated but structurally unstable.",
+            metrics: { water: 15, drainage: 95, nutrients: 10 }
+        },
+        loamy_sand: {
+            name: "Loamy Sand",
+            category: "Coarse-textured soil",
+            description: "Loamy sand is predominantly composed of large sand particles but contains a tiny trace element of silt and clay. This allows it to barely pack into a loose, extremely fragile ball that shatters easily.",
+            metrics: { water: 25, drainage: 85, nutrients: 20 }
+        },
+        sandy_loam: {
+            name: "Sandy Loam",
+            category: "Moderately coarse-textured soil",
+            description: "Sandy loam contains substantial sand with just enough structural fine mud particles to build fragile, short ribbons. It balances superior aeration and warm-up speeds with modest water retention capacities.",
+            metrics: { water: 45, drainage: 70, nutrients: 40 }
+        },
+        silt_loam: {
+            name: "Silt Loam",
+            category: "Medium-textured soil",
+            description: "Silt loam feels remarkably smooth, velvety, and floury when wet. It forms short ribbons. It has exceptional plant-available water storage capacities but is highly vulnerable to crusting and erosion.",
+            metrics: { water: 85, drainage: 50, nutrients: 70 }
+        },
+        loam: {
+            name: "Loam",
+            category: "Medium-textured soil",
+            description: "Loam is considered the ideal, balanced agricultural textural compromise. It features roughly equal influence of sand, silt, and clay particles, optimizing water storage alongside strong drainage and rich nutrient retention.",
+            metrics: { water: 65, drainage: 60, nutrients: 75 }
+        },
+        sandy_clay_loam: {
+            name: "Sandy Clay Loam",
+            category: "Moderately fine-textured soil",
+            description: "Sandy clay loam forms a reliable, medium-length structural ribbon. The clay ensures the sample is sticky and cohesive, while the sand content presents an unmistakable grit signature.",
+            metrics: { water: 55, drainage: 40, nutrients: 65 }
+        },
+        silty_clay_loam: {
+            name: "Silty Clay Loam",
+            category: "Moderately fine-textured soil",
+            description: "Silty clay loam produces a continuous medium ribbon (1-2 inches) and displays a sticky, very smooth texture when rubbed, owing to its combination of fine silt and clay.",
+            metrics: { water: 80, drainage: 30, nutrients: 80 }
+        },
+        clay_loam: {
+            name: "Clay Loam",
+            category: "Moderately fine-textured soil",
+            description: "Clay loam safely yields stable 1-2 inch ribbons. It features an even, heavy distribution of smooth silt and gritty sand, making it a highly resilient but heavy soil profile.",
+            metrics: { water: 75, drainage: 35, nutrients: 85 }
+        },
+        sandy_clay: {
+            name: "Sandy Clay",
+            category: "Fine-textured soil",
+            description: "Sandy clay forms long, resilient ribbons (>2 inches). It is highly plastic and sticky from clay, but retains a distinct, coarse abrasive grinding sensation when rubbed due to deep sand channels.",
+            metrics: { water: 65, drainage: 20, nutrients: 80 }
+        },
+        silty_clay: {
+            name: "Silty Clay",
+            category: "Fine-textured soil",
+            description: "Silty clay is a dense, high-retention fine soil that forms powerful long ribbons. It feels entirely smooth, uniform, and slippery when wet, presenting negligible coarse grit.",
+            metrics: { water: 90, drainage: 15, nutrients: 90 }
+        },
+        clay: {
+            name: "Clay",
+            category: "Fine-textured soil",
+            description: "Clay is a highly cohesive, heavy soil that easily creates strong, flexible ribbons exceeding 2 inches. It feels extremely sticky when wet and becomes rock-hard upon drying, severely restricting drainage but offering immense nutrient holding capacities.",
+            metrics: { water: 95, drainage: 10, nutrients: 95 }
+        }
+    };
+
+    // State Management Engine State tracking
+    let history = ['start'];
+    let currentData = {};
+    let pathLabels = ['Start'];
+
+    function render() {
+        const currentKey = history[history.length - 1];
+        const contentArea = document.getElementById('dynamic-content');
+        const backBtn = document.getElementById('btn-back');
+        
+        // Handle Enabling/Disabling Back Button
+        backBtn.disabled = history.length === 1;
+
+        // Check if current state is a final classification result
+        if (soilDetails[currentKey]) {
+            renderResult(currentKey, contentArea);
+            updateProgress(true);
+            return;
+        }
+
+        // Render standard question/criteria step
+        const step = steps[currentKey];
+        updateProgress(false, step.index);
+
+        let optionsHtml = '';
+        step.options.forEach((opt, idx) => {
+            optionsHtml += `
+                <button class="btn-option" onclick="handleSelect(${idx})">
+                    ${opt.text}
+                </button>
+            `;
+        });
+
+        contentArea.innerHTML = `
+            <div class="step-layout">
+                <div class="step-icon">${step.icon}</div>
+                <div>
+                    <h2 class="step-title">${step.title}</h2>
+                    <p class="step-instruction">${step.instruction}</p>
+                    <div class="step-question">${step.question}</div>
+                    <div class="button-group">
+                        ${optionsHtml}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        renderPathMap();
+    }
+
+    function handleSelect(optionIndex) {
+        const currentKey = history[history.length - 1];
+        const step = steps[currentKey];
+        const chosenOption = step.options[optionIndex];
+
+        // Capture labels for visual flowchart tracing path
+        if (chosenOption.pathLabel) {
+            pathLabels.push(chosenOption.pathLabel);
+        }
+
+        // Handle persistent multi-step criteria data storage
+        if (chosenOption.data) {
+            Object.assign(currentData, chosenOption.data);
+        }
+
+        // Path Branch Evaluation Logic
+        if (chosenOption.feel) {
+            const ribbon = currentData.ribbon;
+            const finalResult = resultsMapping[ribbon][chosenOption.feel];
+            history.push(finalResult);
+            pathLabels.push(`Result: ${soilDetails[finalResult].name}`);
+        } else if (chosenOption.result) {
+            history.push(chosenOption.result);
+            pathLabels.push(`Result: ${soilDetails[chosenOption.result].name}`);
+        } else if (chosenOption.next) {
+            history.push(chosenOption.next);
+        }
+
+        render();
+    }
+
+    function renderResult(resultKey, container) {
+        const soil = soilDetails[resultKey];
+        container.innerHTML = `
+            <div class="result-card">
+                <span class="result-badge">Identified Textural Class</span>
+                <h2 class="result-name">${soil.name}</h2>
+                <div class="result-category">${soil.category}</div>
+                <p class="result-desc">${soil.description}</p>
+                
+                <div class="properties-grid">
+                    <div class="prop-item">
+                        <div class="prop-label">Water Holding Capacity</div>
+                        <div class="meter-bg"><div class="meter-bar" style="width: ${soil.metrics.water}%"></div></div>
+                    </div>
+                    <div class="prop-item">
+                        <div class="prop-label">Permeability / Drainage</div>
+                        <div class="meter-bg"><div class="meter-bar" style="width: ${soil.metrics.drainage}%"></div></div>
+                    </div>
+                    <div class="prop-item">
+                        <div class="prop-label">Nutrient Storage Potential</div>
+                        <div class="meter-bg"><div class="meter-bar" style="width: ${soil.metrics.nutrients}%"></div></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        renderPathMap();
+    }
+
+    function renderPathMap() {
+        const pathContainer = document.getElementById('flowchart-path');
+        let html = '';
+        
+        pathLabels.forEach((label, index) => {
+            const isLast = index === pathLabels.length - 1;
+            const isResult = label.startsWith('Result:');
+            
+            let classString = "path-node";
+            if (isLast) classString += " active";
+            if (isResult) classString += " final";
+
+            html += `<span class="${classString}">${label}</span>`;
+            if (!isLast) {
+                html += `<span class="path-arrow">→</span>`;
+            }
+        });
+
+        pathContainer.innerHTML = html;
+    }
+
+    function updateProgress(isDone, stepIndex = 0) {
+        const text = document.getElementById('progress-text');
+        const dots = document.querySelectorAll('.step-dot');
+        
+        if (isDone) {
+            text.innerText = "Classification Complete";
+            dots.forEach(dot => {
+                dot.classList.remove('active');
+                dot.classList.add('completed');
+            });
+            return;
+        }
+
+        text.innerText = `Step ${stepIndex + 1} of 5`;
+        dots.forEach((dot, idx) => {
+            dot.classList.remove('active', 'completed');
+            if (idx === stepIndex) dot.classList.add('active');
+            if (idx < stepIndex) dot.classList.add('completed');
+        });
+    }
+
+    function goBack() {
+        if (history.length > 1) {
+            history.pop();
+            pathLabels.pop();
+            // Clear current data if stepping backward out of length evaluation
+            if (history[history.length - 1] === 'ribbonLength') {
+                delete currentData.ribbon;
+            }
+            render();
+        }
+    }
+
+    function restart() {
+        history = ['start'];
+        currentData = {};
+        pathLabels = ['Start'];
+        render();
+    }
+
+    // Initialize application layout on system load
+    render();
+</script>
+
+</body>
+</html>
