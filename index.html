@@ -384,7 +384,7 @@
 <div class="container">
     <header>
         <h1>Soil Texture by Feel</h1>
-        <p>USDA NRCS Field Methodology</p>
+        <p>USDA NRCS Methodology</p>
     </header>
 
     <div class="progress-container">
@@ -415,6 +415,7 @@
 
     <div class="info-footer">
         Based on the official <a href="https://www.nrcs.usda.gov/sites/default/files/2022-11/texture-by-feel.pdf" target="_blank">USDA NRCS Texture-by-Feel Flow Diagram</a> (Thien, 1979).
+        Images from Professor Mark Valen <a href="https://www.youtube.com/watch?v=ahY5qZwaY1E&t=627s"
     </div>
 </div>
 
@@ -423,10 +424,11 @@
     const steps = {
         start: {
             title: "Sample Preparation",
-            instruction: "Place approximately 2 teaspoons of soil in your palm. Add water drop-by-drop and knead the soil to break down all aggregate chunks. Stop adding water when the soil reaches a plastic, highly moldable consistency resembling moist putty.",
+            instruction: "Place approximately 25 of soil in your palm. Add water and knead the soil to break down all chunks. Stop adding water when the soil reaches a highly moldable consistency resembling moist putty.",
+            image: "25gSoil.png",
             question: "Is your sample uniformly mixed, moist, and ready to test?",
             options: [
-                { text: "Yes, begin test criteria", next: "ballTest" }
+                { text: "Yes, let's get started!", next: "ballTest" }
             ],
             icon: `<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v14m0-14c-1.5 0-3 1.5-3 4s1.5 5 3 7m0-11c1.5 0 3 1.5 3 4s-1.5 5-3 7m-9 5h18"/></svg>`,
             index: 0
@@ -435,9 +437,10 @@
             title: "The Ball Squeeze Test",
             instruction: "Take the structural clump of prepared soil and squeeze it firmly inside your hand closure.",
             question: "Does the soil remain in a stable ball shape when squeezed?",
+             image: "BallSoil.png",
             options: [
-                { text: "No (It crumbles/falls apart instantly)", result: "sand", pathLabel: "No Ball" },
-                { text: "Yes (It safely holds its ball structure)", next: "ribbonTest", pathLabel: "Ball Forms" }
+                { text: "No (It crumbles and falls apart instantly)", result: "sand", pathLabel: "No Ball" },
+                { text: "Yes (It holds its ball structure)", next: "ribbonTest", pathLabel: "Ball Forms" }
             ],
             icon: `<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" stroke-dasharray="3 3"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 2a10 10 0 110 20 10 10 0 010-20z"/></svg>`,
             index: 1
@@ -445,6 +448,7 @@
         ribbonTest: {
             title: "The Ribbon Test",
             instruction: "Place the soil ball securely between your thumb and forefinger. Gently push the soil upward with your thumb, squeezing it out over your index finger to form a flat ribbon of uniform thickness.",
+            image: "RibbonSoil.png",
             question: "Does the soil form a continuous ribbon without breaking immediately?",
             options: [
                 { text: "No (It breaks without ribboning)", result: "loamy_sand", pathLabel: "No Ribbon" },
@@ -455,19 +459,20 @@
         },
         ribbonLength: {
             title: "Ribbon Length Measurement",
-            instruction: "Allow the ribbon to slide outward over your finger until it snaps off naturally from its own weight. Estimate or measure the length of the ribbon fragments.",
-            question: "What length did the ribbon reach before snapping?",
+            instruction: "Allow the ribbon to slide outward over your finger until it breaks off naturally from its own weight. Estimate or measure the length of the ribbon fragments.",
+            question: "What length did the ribbon reach before breaking?",
             options: [
-                { text: "Weak Ribbon (Short, less than 1 inch / 2.5 cm)", next: "feelTest", data: { ribbon: "weak" }, pathLabel: "Weak (<1\")" },
-                { text: "Medium Ribbon (Moderate, 1 to 2 inches / 2.5–5 cm)", next: "feelTest", data: { ribbon: "medium" }, pathLabel: "Medium (1-2\")" },
-                { text: "Strong Ribbon (Long, greater than 2 inches / 5 cm)", next: "feelTest", data: { ribbon: "strong" }, pathLabel: "Strong (>2\")" }
+                { text: "Weak Ribbon (Short, less than 1 inch)", next: "feelTest", data: { ribbon: "weak" }, pathLabel: "Weak (<1\")" },
+                { text: "Medium Ribbon (Moderate, 1 to 2 inches)", next: "feelTest", data: { ribbon: "medium" }, pathLabel: "Medium (1-2\")" },
+                { text: "Strong Ribbon (Long, greater than 2 inches)", next: "feelTest", data: { ribbon: "strong" }, pathLabel: "Strong (>2\")" }
             ],
             icon: `<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="10" rx="1"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 7v4M10 7v6M14 7v4M18 7v6"/></svg>`,
             index: 3
         },
         feelTest: {
-            title: "The Wet Feel Evaluation",
+            title: "Soil Texture",
             instruction: "Take a small pinch of soil and place it in your palm. Add an excess of water until it forms a very wet, muddy slurry. Rub it thoroughly against your skin with your index finger.",
+            image: "SoilTexture.png",
             question: "How does the excessively wet soil primarily feel?",
             options: [
                 { text: "Very Gritty (Individual sand grains scratch against skin)", feel: "gritty", pathLabel: "Gritty" },
