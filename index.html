@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Texture Field Assistant</title>
+    <style>
+        :root {
+            --primary: #5c4033;
+            --primary-light: #8b5a2b;
+            --secondary: #4a752c;
+            --bg-gradient: linear-gradient(135deg, #f5f2eb 0%, #e6dfd3 100%);
+            --card-bg: #ffffff;
+            --text-main: #2d251e;
+            --text-muted: #6b5b52;
+            --border: #dcd1be;
+            --radius: 16px;
+            --shadow: 0 10px 25px rgba(92, 64, 51, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 540px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: var(--primary);
+            color: #ffffff;
+            padding: 24px 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--secondary);
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-top: 4px;
+        }
+
+        .progress-container {
+            background: #faf8f5;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .step-indicator {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: var(--secondary);
+            transform: scale(1.2);
+        }
+
+        .content-body {
+            padding: 24px 20px;
+            flex-grow: 1;
+        }
+
+        /* Responsive Image Container */
+        .image-container {
+            width: 100%;
+            max-height: 240px;
+            background: #fdfbf7;
+            border-radius: calc(var(--radius) - 4px);
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            display: none; /* Controlled by JS */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .step-image {
+            width: 100%;
+            height: 100%;
+            max-height: 240px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .step-title-block {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .step-description {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-option {
+            background: #ffffff;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-option:hover {
+            border-color: var(--secondary);
+            background: #f7faf5;
+            transform: translateY(-1px);
+        }
+
+        .btn-option::after {
+            content: "→";
+            font-size: 1.1rem;
+            color: var(--secondary);
+            opacity: 0.7;
+        }
+
+        /* Results Screen UI */
+        .results-card {
+            background: #fcfcf9;
+            border: 2px dashed var(--secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        .results-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--secondary);
+            letter-spacing: 1px;
+        }
+
+        .results-name {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 4px 0 12px 0;
+        }
+
+        .stat-row {
+            margin-top: 14px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .stat-bar-bg {
+            background: #e6dfd3;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            background: var(--secondary);
+            height: 100%;
+            width: 0%;
+            transition: width 0.8s ease-out;
+        }
+
+        .breadcrumbs {
+            background: #f5f2eb;
+            padding: 10px 20px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+
+        .footer-nav {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            background: #faf8f5;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-nav {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .btn-nav:hover {
+            background: #e6dfd3;
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Soil Texture By Feel</h1>
+        <p>USDA NRCS Field Methodology Assistant</p>
+    </div>
+
+    <div class="progress-container" id="progress-bar">
+        <div class="step-indicator" id="step-number">Step 1 of 5</div>
+        <div class="dots" id="step-dots"></div>
+    </div>
+
+    <div class="content-body">
+        <div class="image-container" id="image-frame">
+            <img src="" id="step-media" class="step-image" alt="Instructional Graphic">
+        </div>
+
+        <div class="step-title-block">
+            <h2 class="step-title" id="ui-title">Loading...</h2>
+        </div>
+        <p class="step-description" id="ui-desc">Please wait while the module initialises.</p>
+
+        <div class="options-list" id="ui-options"></div>
+    </div>
+
+    <div class="breadcrumbs" id="ui-history">Start</div>
+
+    <div class="footer-nav">
+        <button class="btn-nav" id="btn-back" onclick="goBack()">← Back</button>
+        <button class="btn-nav" onclick="restart()">Restart Test ↻</button>
+        Based on the official <a href="https://www.nrcs.usda.gov/sites/default/files/2022-11/texture-by-feel.pdf" target="_blank">USDA NRCS Texture-by-Feel Flow Diagram</a> (Thien, 1979).
+        Images from <a href="https://www.youtube.com/watch?v=ahY5qZwaY1E&t=627s" target="_blank">Professor Mark Valen</a> .
+    </div>
+</div>
+
+<script>
+    // System Flow Chart Decision Tree Structure
+    const workflow = {
+        start: {
+            title: "Soil Preparation",
+            stepNum: 1,
+            description: "Take a handful of soil (approx. 25g). Add water and knead it thoroughly until it reaches a uniform consistency similar to putty or modeling clay.",
+            image: "25gSoil.png",
+            options: [
+                { text: "Are you ready to get started??", next: "ball_formation" }
+            ]
+        },
+        ball_formation: {
+            title: "Ball Formation Test",
+            stepNum: 2,
+            description: "Gently squeeze the sample. Does it hold together or instantly crumble when pressure is applied?",
+            image: "BallSoil.png",
+            options: [
+                { text: "Yes, it holds its shape (Proceed to ribbon test)", next: "ribbon_test" },
+                { text: "No, it crumbles and breaks apart", result: "Sand", desc: "Coarse-textured soil. Loose individual sand grains fail to bond together under standard moisture profiles.", stats: [10, 95, 5] }
+            ]
+        },
+        ribbon_test: {
+            title: "Ribbon Formation Test",
+            stepNum: 3,
+            description: "Place the soil ball between your thumb and forefinger. Roll your thumb upward gently to press the soil out, forming a ribbon of uniform width and thickness (~3mm). Allow it to extend past your finger until it snaps off naturally.",
+            image: "RibbonSoil.png", 
+            options: [
+                { text: "Yes, it forms an extended ribbon", next: "ribbon_length" },
+                { text: "No, it shears or falls apart immediately without ribboning", result: "Loamy Sand", desc: "Coarse-textured soil. Slightly coherent; has just enough silt/clay to pack a ball, but lacks structural elasticity.", stats: [22, 85, 15] }
+            ]
+        },
+        ribbon_length: {
+            title: "Ribbon Measurement",
+            stepNum: 4,
+            description: "Evaluate the length achieved by your soil ribbon before gravity broke it.",
+            options: [
+                { text: "Weak Ribbon (Short, less than 1 inch / 2.5 cm)", next: "grittiness_weak" },
+                { text: "Medium Ribbon (Moderate, 1 to 2 inches / 2.5 - 5 cm)", next: "grittiness_medium" },
+                { text: "Strong Ribbon (Long, greater than 2 inches / 5 cm)", next: "grittiness_strong" }
+            ]
+        },
+        grittiness_weak: {
+            title: "Texture Assessment (< 1\")",
+            stepNum: 5,
+            description: "Take a small pinch of the soil sample, oversaturate it with water in the palm of your hand with water. Evaluate the texture as you rub soil with your index finger.",
+            image: "SoilTexture.png",
+            options: [
+                { text: "Feels highly gritty and abrasive", result: "Sandy Loam", desc: "Moderately coarse soil profile. Dominated by coarse sand with enough clay to support a small, brittle ribbon.", stats: [40, 70, 30] },
+                { text: "Feels exceptionally smooth, like flour or talcum", result: "Silt Loam", desc: "Medium-textured soil profile. High silt content produces a velvety smooth feel with minimal sand grains present.", stats: [65, 45, 55] },
+                { text: "Feels balanced (Neither grit nor smoothness dominates)", result: "Loam", desc: "Ideal medium-textured soil configuration. An even, classic blend of sand, silt, and clay particles.", stats: [50, 55, 60] }
+            ]
+        },
+        grittiness_medium: {
+            title: "Texture Assessment (1\" - 2\")",
+            stepNum: 5,
+            description: "Take a small pinch of the soil sample, oversaturate it with water in the palm of your hand with water. Evaluate the texture as you rub soil with your index finger.",
+           image: "SoilTexture.png",
+            options: [
+                { text: "Feels highly gritty and abrasive", result: "Sandy Clay Loam", desc: "Moderately fine-textured soil profile. Noticeable grittiness structural frame embedded within a cohesive clay matrix.", stats: [55, 40, 65] },
+                { text: "Feels exceptionally smooth and slick", result: "Silty Clay Loam", desc: "Moderately fine-textured soil profile. Smooth, heavy silt composition displaying standard moderate structural ribbon retention.", stats: [75, 30, 80] },
+                { text: "Feels balanced (Neither grit nor smoothness dominates)", result: "Clay Loam", desc: "Moderately fine-textured soil profile. Stable clay contents yield high structural integrity with balanced, distributed sand and silt grains.", stats: [70, 35, 85] }
+            ]
+        },
+        grittiness_strong: {
+            title: "Texture Assessment (> 2\")",
+            stepNum: 5,
+          description: "Take a small pinch of the soil sample, oversaturate it with water in the palm of your hand with water. Evaluate the texture as you rub soil with your index finger.",
+            options: [
+                { text: "Feels highly gritty and abrasive", result: "Sandy Clay", desc: "Fine-textured soil profile. Heavily cohesive clay values intermixed with prominent, abrasive sand aggregates.", stats: [75, 20, 85] },
+                { text: "Feels exceptionally smooth and plastic", result: "Silty Clay", desc: "Fine-textured soil profile. Highly plastic, smooth clay structure. Extremely sticky behavior when saturated.", stats: [85, 15, 95] },
+                { text: "Feels balanced (Neither grit nor smoothness dominates)", result: "Clay", desc: "Fine-textured soil profile. Massive structural cohesion, highly resilient long ribbon capabilities, extreme nutrient and moisture retention capacities.", stats: [95, 10, 100] }
+            ]
+        }
+    };
+
+    let historyLog = ['start'];
+
+    function renderStep() {
+        const currentKey = historyLog[historyLog.length - 1];
+        const step = workflow[currentKey];
+
+        // Back button visibility
+        document.getElementById('btn-back').style.visibility = historyLog.length > 1 ? 'visible' : 'hidden';
+
+        // Update UI Text Elements
+        document.getElementById('ui-title').innerText = step.title;
+        document.getElementById('ui-desc').innerText = step.description;
+
+        // Image Module Handling
+        const imageFrame = document.getElementById('image-frame');
+        const stepMedia = document.getElementById('step-media');
+        if (step.image && step.image !== "") {
+            stepMedia.src = step.image;
+            imageFrame.style.display = 'flex';
+        } else {
+            imageFrame.style.display = 'none';
+            stepMedia.src = "";
+        }
+
+        // Progress Navigation Tracking Indicators
+        document.getElementById('progress-bar').style.display = 'flex';
+        document.getElementById('step-number').innerText = `Step ${step.stepNum} of 5`;
+        
+        const dotsBox = document.getElementById('step-dots');
+        dotsBox.innerHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            const dot = document.createElement('div');
+            dot.className = `dot ${i === step.stepNum ? 'active' : ''}`;
+            dotsBox.appendChild(dot);
+        }
+
+        // Update Option Command Selections
+        const optionsBox = document.getElementById('ui-options');
+        optionsBox.innerHTML = '';
+
+        step.options.forEach(opt => {
+            const button = document.createElement('button');
+            button.className = 'btn-option';
+            button.innerText = opt.text;
+            
+            if (opt.next) {
+                button.onclick = () => {
+                    historyLog.push(opt.next);
+                    renderStep();
+                };
+            } else if (opt.result) {
+                button.onclick = () => renderFinalResult(opt.result, opt.desc, opt.stats);
+            }
+            optionsBox.appendChild(button);
+        });
+
+        // Update Historical Navigation Breadcrumb Trail
+        updateBreadcrumbs();
+    }
+
+    function renderFinalResult(name, description, stats) {
+        document.getElementById('progress-bar').style.display = 'none';
+        document.getElementById('image-frame').style.display = 'none';
+        document.getElementById('ui-title').innerText = "Classification Complete";
+        document.getElementById('ui-desc').innerText = "The evaluation criteria matches the following classification profile:";
+
+        const optionsBox = document.getElementById('ui-options');
+        optionsBox.innerHTML = `
+            <div class="results-card">
+                <div class="results-label">Identified Textural Class</div>
+                <div class="results-name">${name}</div>
+                <p style="font-size:0.9rem; line-height:1.4; color:var(--text-muted); margin-bottom:16px;">${description}</p>
+                
+                <div class="stat-row">
+                    <div class="stat-label"><span>Water Holding Capacity</span><span>${stats[0]}%</span></div>
+                    <div class="stat-bar-bg"><div class="stat-bar-fill" id="bar-water"></div></div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-label"><span>Permeability / Drainage</span><span>${stats[1]}%</span></div>
+                    <div class="stat-bar-bg"><div class="stat-bar-fill" id="bar-drain"></div></div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-label"><span>Nutrient Storage Potential</span><span>${stats[2]}%</span></div>
+                    <div class="stat-bar-bg"><div class="stat-bar-fill" id="bar-nutri"></div></div>
+                </div>
+            </div>
+        `;
+
+        // Update historical path list ending node
+        const breadcrumbBox = document.getElementById('ui-history');
+        breadcrumbBox.innerText += ` → [${name}]`;
+        breadcrumbBox.scrollLeft = breadcrumbBox.scrollWidth;
+
+        // Animate performance metrics output bars
+        setTimeout(() => {
+            document.getElementById('bar-water').style.width = `${stats[0]}%`;
+            document.getElementById('bar-drain').style.width = `${stats[1]}%`;
+            document.getElementById('bar-nutri').style.width = `${stats[2]}%`;
+        }, 100);
+    }
+
+    function updateBreadcrumbs() {
+        const trail = historyLog.map(key => workflow[key].title);
+        const breadcrumbBox = document.getElementById('ui-history');
+        breadcrumbBox.innerText = trail.join(' → ');
+        breadcrumbBox.scrollLeft = breadcrumbBox.scrollWidth;
+    }
+
+    function goBack() {
+        if (historyLog.length > 1) {
+            historyLog.pop();
+            renderStep();
+        }
+    }
+
+    function restart() {
+        historyLog = ['start'];
+        renderStep();
+    }
+
+    // Initialize application logic load sequence
+    renderStep();
+</script>
+
+</body>
+</html>
