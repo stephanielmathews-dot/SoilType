@@ -243,12 +243,40 @@
             overflow-x: auto;
         }
 
+        /* Fixed & Structured Footer Layout */
         .footer-nav {
             padding: 16px 20px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 14px;
             background: #faf8f5;
             border-top: 1px solid var(--border);
+        }
+
+        .footer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .footer-credits {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            text-align: center;
+            border-top: 1px solid #eee9df;
+            padding-top: 12px;
+        }
+
+        .footer-credits a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-credits a:hover {
+            text-decoration: underline;
         }
 
         .btn-nav {
@@ -297,10 +325,15 @@
     <div class="breadcrumbs" id="ui-history">Start</div>
 
     <div class="footer-nav">
-        <button class="btn-nav" id="btn-back" onclick="goBack()">← Back</button>
-        <button class="btn-nav" onclick="restart()">Restart Test ↻</button>
-        Based on the official <a href="https://www.nrcs.usda.gov/sites/default/files/2022-11/texture-by-feel.pdf" target="_blank">USDA NRCS Texture-by-Feel Flow Diagram</a> (Thien, 1979).
-        Images from <a href="https://www.youtube.com/watch?v=ahY5qZwaY1E&t=627s" target="_blank">Professor Mark Valen</a> .
+        <div class="footer-actions">
+            <button class="btn-nav" id="btn-back" onclick="goBack()">← Back</button>
+            <button class="btn-nav" onclick="restart()">Restart Test ↻</button>
+        </div>
+        
+        <div class="footer-credits">
+            Based on the official <a href="https://www.nrcs.usda.gov/sites/default/files/2022-11/texture-by-feel.pdf" target="_blank">USDA NRCS Texture-by-Feel Flow Diagram</a> (Thien, 1979).<br>
+            Images from <a href="https://www.youtube.com/watch?v=ahY5qZwaY1E&t=627s" target="_blank">Professor Mark Valen</a>.
+        </div>
     </div>
 </div>
 
